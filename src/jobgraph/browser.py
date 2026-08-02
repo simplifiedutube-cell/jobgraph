@@ -48,7 +48,32 @@ async def human_pause() -> None:
 
 @asynccontextmanager
 async def browser_context(headless: bool | None = None) -> AsyncIterator[BrowserContext]:
-    """The shared persistent context. Cookies survive across runs."""
+    """The shared browser context. Two modes.
+
+    CDP attach (`CHROME_CDP_URL` set) reuses a Chrome *you* started, with the
+    sessions you are already logged into — no separate login, and this project
+    never reads your cookie store. Start Chrome yourself with:
+
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \\
+            --remote-debugging-port=9222
+
+    Note Chrome must be fully quit first: a running instance holds a lock on
+    its profile directory and will ignore the flag.
+
+    Otherwise the project launches its own persistent profile in
+    `data/browser/`, which you log into once via `jobgraph login`.
+    """
+    if settings.chrome_cdp_url:
+        async with async_playwright() as pw:
+            browser = await pw.chromium.connect_over_cdp(settings.chrome_cdp_url)
+            ctx = browser.contexts[0] if browser.contexts else await browser.new_context()
+            try:
+                yield ctx
+            finally:
+                # Detach only. Closing would kill the user's own browser.
+                await browser.close()
+        return
+
     settings.browser_profile_dir.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as pw:
         ctx = await pw.chromium.launch_persistent_context(

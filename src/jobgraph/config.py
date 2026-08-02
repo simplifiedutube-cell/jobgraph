@@ -141,6 +141,11 @@ class Settings(BaseSettings):
     headless: bool = False
     """Scraping logged-in boards headless trips bot detection more often."""
 
+    chrome_cdp_url: str = ""
+    """Attach to a Chrome you started with --remote-debugging-port=9222 and
+    reuse the sessions you are already signed into. Empty means use the
+    project's own profile in data/browser/. See browser.browser_context."""
+
     action_delay_ms: tuple[int, int] = (400, 1400)
     """Uniform-random pause between browser actions."""
 

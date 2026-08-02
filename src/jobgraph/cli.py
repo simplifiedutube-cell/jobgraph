@@ -194,6 +194,115 @@ def run(
 
 
 @app.command()
+def discover(
+    limit: int = typer.Option(25, help="Max postings to list."),
+    show: bool = typer.Option(True, help="Print the shortlist."),
+) -> None:
+    """Poll the configured boards and show what survives the free filters.
+
+    No LLM calls, so this is free and fast. Run it before a batch to see what
+    the night would actually work on.
+    """
+    from jobgraph.batch import discover as do_discover
+
+    jobs, notes = asyncio.run(do_discover(limit=limit))
+
+    for n in notes:
+        console.print(f"  [dim]·[/dim] {n}")
+
+    if not jobs:
+        console.print("\n[yellow]nothing selected[/yellow] — widen preferences.yaml "
+                      "titles/core_skills, or add boards to companies.yaml")
+        return
+
+    if show:
+        table = Table(title=f"{len(jobs)} candidates")
+        table.add_column("company")
+        table.add_column("title", max_width=52)
+        table.add_column("location", max_width=26, style="dim")
+        for j in jobs:
+            table.add_row(j.company, j.title, j.location or "-")
+        console.print(table)
+
+
+@app.command()
+def apply(
+    limit: int = typer.Option(10, help="How many postings to process."),
+    urls: Path = typer.Option(None, "--urls", help="File of URLs, one per line."),
+    submit: bool = typer.Option(True, "--submit/--no-submit", help="Run submission."),
+    yes: bool = typer.Option(False, "--yes", help="Skip the live-run confirmation."),
+) -> None:
+    """Discover and apply. This is the unattended entry point.
+
+    Honours DRY_RUN, the per-run and daily caps, and the STOP kill switch.
+    Writes SUMMARY.md into the run directory.
+    """
+    from jobgraph.batch import discover as do_discover
+    from jobgraph.batch import read_urls, run_batch
+
+    if urls is not None:
+        jobs = read_urls(urls)[:limit]
+        console.print(f"[dim]{len(jobs)} urls from {urls}[/dim]")
+    else:
+        jobs, notes = asyncio.run(do_discover(limit=limit))
+        for n in notes:
+            console.print(f"  [dim]·[/dim] {n}")
+
+    if not jobs:
+        console.print("[yellow]nothing to apply to[/yellow]")
+        raise typer.Exit(0)
+
+    live = submit and not settings.dry_run
+    mode = "[red]LIVE — applications will be sent[/red]" if live else "DRY RUN"
+    console.print(f"\n{mode}  ·  {len(jobs)} jobs  ·  "
+                  f"cap {settings.max_submissions_per_run}/run, "
+                  f"{storage_remaining()}/day remaining")
+
+    if live and not yes:
+        typer.confirm(f"Send real applications for up to {len(jobs)} jobs?", abort=True)
+
+    def progress(i: int, total: int, r: dict) -> None:
+        console.print(
+            f"  [{i}/{total}] {r['company'][:26]:28s} fit={str(r['fit'] or '-'):>3}  "
+            f"{r['status']}"
+            + (f" ({r['outcome']})" if r["outcome"] else "")
+        )
+
+    summary = asyncio.run(run_batch(jobs, submit=submit, on_result=progress))
+
+    console.print(
+        f"\nprocessed [bold]{summary['processed']}[/bold]/{summary['considered']}  "
+        f"submitted [bold]{summary['submitted']}[/bold]  "
+        + "  ".join(f"{k}={v}" for k, v in sorted(summary["counts"].items()))
+    )
+    if summary["fatal"]:
+        console.print(f"[red]aborted:[/red] {summary['fatal']}")
+    console.print(f"[dim]{settings.runs_dir / summary['run_id'] / 'SUMMARY.md'}[/dim]")
+
+    if summary["fatal"]:
+        raise typer.Exit(1)
+
+
+def storage_remaining() -> int:
+    from jobgraph import storage
+
+    storage.init_db()
+    return storage.remaining_daily_budget()
+
+
+@app.command()
+def login(board: str = typer.Argument(..., help="linkedin | naukri | wellfound")) -> None:
+    """Open a real browser window so you can log in by hand.
+
+    This project never handles your credentials — you log in, Chromium keeps
+    the cookies in data/browser/, and later runs reuse them.
+    """
+    from jobgraph.browser import interactive_login
+
+    asyncio.run(interactive_login(board))
+
+
+@app.command()
 def status(limit: int = typer.Option(20, help="Rows to show.")) -> None:
     """Show recent applications and today's remaining budget."""
     from jobgraph import storage

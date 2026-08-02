@@ -1,0 +1,40 @@
+# Company boards to poll. Every slug here was verified to return 200 from the
+# vendor's public API on 2026-08-02.
+#
+# These are ATS board slugs, not company names. To find one, open a company's
+# careers page and look at the URL:
+#   job-boards.greenhouse.io/SLUG/jobs/123   -> greenhouse: SLUG
+#   jobs.lever.co/SLUG/abc-123               -> lever: SLUG
+#
+# Only Greenhouse, Lever and Ashby can be auto-submitted — that is deliberate.
+# Adding a Workday board here would discover roles the graph can only queue for
+# manual application.
+#
+# This starter list is broad on purpose. Trim it to companies you would
+# genuinely join: fit scoring costs an LLM call per surviving posting, and a
+# focused list produces better applications than a long one.
+
+greenhouse:
+  - anthropic
+  - databricks
+  - scaleai
+  - figma
+  - vercel
+  - airtable
+  - discord
+  - robinhood
+  - stripe
+  - instacart
+  - affirm
+  - asana
+  - gitlab
+  - elastic
+  - datadog
+  - mongodb
+  - twilio
+  - cloudflare
+
+lever:
+  - palantir
+  - veeva
+  - ro

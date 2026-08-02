@@ -85,6 +85,7 @@ class DiscoveryState(TypedDict, total=False):
     selected: list[JobPosting]
     results: Annotated[list[dict[str, Any]], operator.add]
     errors: Annotated[list[str], operator.add]
+    notes: Annotated[list[str], operator.add]
 
 
 def new_application_state(job: JobPosting, run_id: str, run_dir: str) -> ApplicationState:

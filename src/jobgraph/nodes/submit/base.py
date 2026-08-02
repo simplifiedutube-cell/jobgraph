@@ -187,6 +187,92 @@ class FormFiller:
             except Exception as exc:  # noqa: BLE001
                 self.skipped.append(f"textarea[{i}]: {type(exc).__name__}")
 
+    async def answer_choice_fields(
+        self,
+        *,
+        container: str = "form",
+        prefs: dict | None = None,
+    ) -> None:
+        """Dropdowns and radio groups — LinkedIn Easy Apply is full of them.
+
+        These are almost always yes/no eligibility questions ("Do you have
+        experience with X?", "Are you authorised to work in...?") or a years-
+        of-experience number. Free-text answers cannot be pasted into them, so
+        they need their own handling.
+
+        The rule is the same as everywhere else: answer only what we can
+        derive from the profile, and record anything required-but-unanswered
+        so the caller can escalate instead of guessing.
+        """
+        prefs = prefs or {}
+        await self._answer_selects(container, prefs)
+        await self._answer_radios(container, prefs)
+
+    async def _answer_selects(self, container: str, prefs: dict) -> None:
+        selects = self.page.locator(f"{container} select")
+        try:
+            count = await selects.count()
+        except Exception:  # noqa: BLE001
+            return
+
+        for i in range(min(count, 30)):
+            sel = selects.nth(i)
+            try:
+                if not await sel.is_visible():
+                    continue
+                current = await sel.input_value()
+                if current and current not in ("", "Select an option"):
+                    continue
+
+                label = await self._label_for(sel)
+                options = await sel.locator("option").all_text_contents()
+                choice = _choose_option(label, options, prefs)
+
+                if choice is None:
+                    if await self._is_required(sel):
+                        self.unanswered_required.append(f"[dropdown] {label[:80]}")
+                    continue
+
+                await sel.select_option(label=choice, timeout=5_000)
+                await human_pause()
+                self.filled[f"select:{label[:60]}"] = choice
+            except Exception as exc:  # noqa: BLE001
+                self.skipped.append(f"select[{i}]: {type(exc).__name__}")
+
+    async def _answer_radios(self, container: str, prefs: dict) -> None:
+        groups = self.page.locator(f"{container} fieldset")
+        try:
+            count = await groups.count()
+        except Exception:  # noqa: BLE001
+            return
+
+        for i in range(min(count, 30)):
+            group = groups.nth(i)
+            try:
+                radios = group.locator("input[type='radio']")
+                n = await radios.count()
+                if n == 0:
+                    continue
+                if await radios.locator(":checked").count() > 0:
+                    continue
+
+                label = " ".join((await group.inner_text()).split())
+                options: list[str] = []
+                for r in range(n):
+                    options.append(await self._label_for(radios.nth(r)) or "")
+
+                choice = _choose_option(label, options, prefs)
+                if choice is None:
+                    self.unanswered_required.append(f"[radio] {label[:80]}")
+                    continue
+
+                idx = options.index(choice)
+                await radios.nth(idx).check(timeout=5_000)
+                await human_pause()
+                self.filled[f"radio:{label[:60]}"] = choice
+            except Exception as exc:  # noqa: BLE001
+                self.skipped.append(f"radio[{i}]: {type(exc).__name__}")
+
     async def _label_for(self, loc: Locator) -> str:
         """Best-effort label text for a field. ATS markup varies wildly."""
         for expr in (
@@ -256,3 +342,83 @@ def contact_fields() -> dict[str, str]:
 
 def dry_run_banner() -> str:
     return "DRY RUN — form filled, nothing submitted" if settings.dry_run else "LIVE"
+
+
+# Questions where answering "yes" is a factual claim about the candidate that
+# we can only make from the profile. Anything not derivable stays unanswered.
+_YES = ("yes", "y", "true")
+_NO = ("no", "n", "false")
+
+
+def _choose_option(label: str, options: list[str], prefs: dict) -> str | None:
+    """Pick an option for a dropdown or radio group, or None.
+
+    Deliberately conservative. The failure mode we cannot accept is confidently
+    ticking "yes, I have 5 years of Kubernetes" on a form that goes out under
+    someone's name, so anything not directly derivable from the profile returns
+    None and escalates to a human.
+    """
+    clean = [o.strip() for o in options if o and o.strip()]
+    real = [o for o in clean if o.lower() not in ("select an option", "choose", "-", "")]
+    if not real:
+        return None
+
+    text = label.lower()
+
+    def pick(words: tuple[str, ...]) -> str | None:
+        for opt in real:
+            if opt.strip().lower() in words:
+                return opt
+        return None
+
+    # Work authorisation. The profile states this explicitly; anything about
+    # a country the candidate needs sponsorship for is a truthful "no".
+    if re.search(r"authoriz|authoris|eligible to work|right to work|work permit", text):
+        auth = str(prefs.get("work_authorization", "")).lower()
+        if "india" in text and "indian" in auth:
+            return pick(_YES)
+        if re.search(r"\b(us|u\.s|united states|uk|canada|eu|europe)\b", text):
+            return pick(_NO)
+        return None
+
+    if re.search(r"sponsor", text):
+        # "Will you require sponsorship?" — true for anywhere outside India.
+        auth = str(prefs.get("work_authorization", "")).lower()
+        if "sponsorship" in auth and "india" not in text:
+            return pick(_YES)
+        return None
+
+    if re.search(r"willing to relocat|open to relocat", text):
+        return pick(_YES if prefs.get("relocate_ok") else _NO)
+
+    if re.search(r"remote|work from home", text) and prefs.get("remote_ok", True):
+        return pick(_YES)
+
+    if re.search(r"notice period|when can you start|available to start", text):
+        notice = str(prefs.get("notice_period", ""))
+        for opt in real:
+            if opt.lower() in notice.lower() or notice.lower() in opt.lower():
+                return opt
+        return None
+
+    # Years of experience: answer only when the profile clearly clears the bar.
+    m = re.search(r"(\d+)\+?\s*(?:or more\s*)?years", text)
+    if m and re.search(r"how many years|years of experience|do you have", text):
+        wanted = int(m.group(1))
+        total = int(prefs.get("total_years_experience", 8))
+        if wanted <= total:
+            return pick(_YES) or (str(total) if str(total) in real else None)
+        return pick(_NO)
+
+    if re.search(r"how many years", text):
+        total = prefs.get("total_years_experience", 8)
+        for opt in real:
+            if opt.strip() == str(total):
+                return opt
+        return None
+
+    # Boilerplate consent / acknowledgement checkboxes phrased as radios.
+    if re.search(r"agree|acknowledge|consent|have read", text):
+        return pick(_YES)
+
+    return None

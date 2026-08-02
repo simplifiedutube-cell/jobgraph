@@ -29,15 +29,42 @@ from jobgraph.schemas import JobPosting
 from jobgraph.state import DiscoveryState
 
 
-async def discover(limit: int | None = None) -> tuple[list[JobPosting], list[str]]:
-    """Poll the boards and apply the free filters. No LLM calls."""
-    state: DiscoveryState = {"listings": [], "results": [], "errors": [], "notes": []}
-    found = await discover_listings(state)
-    state.update(found)  # type: ignore[typeddict-item]
+async def discover(
+    limit: int | None = None, *, source: str = "boards"
+) -> tuple[list[JobPosting], list[str]]:
+    """Find postings and apply the free filters. No LLM calls.
+
+    `source` is "boards" (Greenhouse/Lever/Ashby public APIs), "linkedin"
+    (scraped, remote + Easy Apply only), or "all".
+    """
+    prefix: list[str] = []
+    seed: list[JobPosting] = []
+
+    if source in ("linkedin", "all"):
+        from jobgraph.nodes.discover_linkedin import discover_linkedin
+
+        li, li_notes = await discover_linkedin(limit=(limit or 25) * 3)
+        seed.extend(li)
+        prefix.extend(f"linkedin: {n}" for n in li_notes)
+
+    state: DiscoveryState = {
+        "listings": list(seed),
+        "results": [],
+        "errors": [],
+        "notes": [],
+    }
+
+    if source in ("boards", "all"):
+        found = await discover_listings(state)
+        state["listings"] = [*seed, *found.get("listings", [])]
+        state["errors"] = found.get("errors", [])
+        found = {"errors": state["errors"]}
+    else:
+        found = {"errors": []}
 
     picked = await filter_and_select(state)
     selected: list[JobPosting] = picked.get("selected", [])
-    notes: list[str] = [*found.get("errors", []), *picked.get("notes", [])]
+    notes: list[str] = [*prefix, *found.get("errors", []), *picked.get("notes", [])]
 
     if limit is not None:
         if len(selected) > limit:

@@ -197,6 +197,9 @@ def run(
 def discover(
     limit: int = typer.Option(25, help="Max postings to list."),
     show: bool = typer.Option(True, help="Print the shortlist."),
+    source: str = typer.Option(
+        "boards", help="boards | linkedin | all. linkedin needs `jobgraph login linkedin`."
+    ),
 ) -> None:
     """Poll the configured boards and show what survives the free filters.
 
@@ -205,7 +208,7 @@ def discover(
     """
     from jobgraph.batch import discover as do_discover
 
-    jobs, notes = asyncio.run(do_discover(limit=limit))
+    jobs, notes = asyncio.run(do_discover(limit=limit, source=source))
 
     for n in notes:
         console.print(f"  [dim]·[/dim] {n}")
@@ -231,6 +234,9 @@ def apply(
     urls: Path = typer.Option(None, "--urls", help="File of URLs, one per line."),
     submit: bool = typer.Option(True, "--submit/--no-submit", help="Run submission."),
     yes: bool = typer.Option(False, "--yes", help="Skip the live-run confirmation."),
+    source: str = typer.Option(
+        "boards", help="boards | linkedin | all. linkedin needs `jobgraph login linkedin`."
+    ),
 ) -> None:
     """Discover and apply. This is the unattended entry point.
 
@@ -244,7 +250,7 @@ def apply(
         jobs = read_urls(urls)[:limit]
         console.print(f"[dim]{len(jobs)} urls from {urls}[/dim]")
     else:
-        jobs, notes = asyncio.run(do_discover(limit=limit))
+        jobs, notes = asyncio.run(do_discover(limit=limit, source=source))
         for n in notes:
             console.print(f"  [dim]·[/dim] {n}")
 

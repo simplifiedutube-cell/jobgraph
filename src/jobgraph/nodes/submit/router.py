@@ -15,7 +15,7 @@ from pathlib import Path
 from jobgraph import storage
 from jobgraph.browser import browser_context
 from jobgraph.config import ReviewMode, check_stop, settings
-from jobgraph.nodes.submit import greenhouse, lever, manual
+from jobgraph.nodes.submit import greenhouse, lever, linkedin, manual
 from jobgraph.schemas import AtsVendor, SubmissionOutcome, SubmissionResult
 from jobgraph.state import ApplicationState
 
@@ -28,6 +28,7 @@ ADAPTERS = {
 # it; keeping it explicit documents that this is a deliberate reuse, not an
 # accident of dict ordering.
 ADAPTERS[AtsVendor.ASHBY] = greenhouse.submit
+ADAPTERS[AtsVendor.LINKEDIN_EASY_APPLY] = linkedin.submit
 
 
 async def route_and_submit(state: ApplicationState) -> dict:

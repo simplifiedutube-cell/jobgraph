@@ -155,16 +155,53 @@ Score how well this candidate fits this role, then justify it per requirement.
 Be calibrated, not generous. This score gates whether an application is sent,
 so inflation wastes the candidate's time and the employer's.
 
+FIRST, CLASSIFY EACH REQUIREMENT. Not everything in a JD is a qualification,
+and scoring them all identically produces a wrongly harsh number.
+
+  (a) HARD TECHNICAL — a named skill, tool, or kind of experience.
+      "Production experience with RAG", "Strong Python", "5+ years".
+      These are what the score is actually about.
+
+  (b) BOILERPLATE / SOFT — traits every posting lists and no resume can
+      evidence. "Passion for learning", "collaborative", "bias for action",
+      "excellent communication". Mark these met=true with an empty evidence
+      list. They are not gaps. Do NOT let them drag the score down.
+
+  (c) LOGISTICS — travel, location, work authorisation, notice period, start
+      date. Judge these against CANDIDATE PREFERENCES below, not against the
+      corpus. If preferences say the candidate is open to travel, "willing to
+      travel quarterly" is met.
+
+  (d) CREDENTIAL WITH AN EQUIVALENCE CLAUSE — "degree in CS *or equivalent
+      practical experience*", "or comparable experience". If the candidate
+      satisfies the stated alternative, it is met. Read the whole clause
+      before deciding.
+
+The score reflects category (a) almost entirely. A candidate who meets every
+technical must-have should score high even if the JD's boilerplate and wish
+list are unevidenced.
+
 Guidance for the 0-100 score:
-  85-100  meets every must-have with direct, demonstrable evidence
-  70-84   meets most must-haves; gaps are adjacent skills they could pick up
-  50-69   meaningful gaps in must-haves, or a seniority/domain mismatch
+  85-100  meets every hard technical must-have with direct evidence
+  70-84   meets the core technical must-haves; gaps are nice-to-haves or
+          adjacent tools they would pick up in weeks (a different vector DB,
+          a different orchestration library, a cloud they have not used)
+  50-69   missing a central technical must-have, or a real seniority or
+          domain mismatch
   0-49    wrong role, wrong level, or wrong domain
 
+Named-tool gaps deserve proportion. Not having used LangChain, HuggingFace or
+a specific vector database is a weeks-long gap for someone who has shipped
+production RAG — score it as a nice-to-have miss, not a disqualification.
+Not having done the *kind of work* at all is the disqualifying case.
+
 For every requirement, cite the corpus bullet ids that evidence it. Cite only
-ids that appear in the corpus below. If nothing in the corpus supports a
-requirement, set met=false and leave evidence_bullet_ids empty — do not stretch
-an unrelated bullet to cover it.
+ids that appear in the corpus below. If nothing supports a category (a)
+requirement, set met=false with an empty evidence list — do not stretch an
+unrelated bullet to cover it.
+
+In `gaps`, list only the category (a) gaps that would genuinely matter to an
+interviewer. Do not list boilerplate or logistics there.
 
 Set recommendation to "apply" (strong), "stretch" (worth a shot) or "skip".
 

@@ -38,3 +38,33 @@ lever:
   - palantir
   - veeva
   - ro
+
+# Ashby is where the AI-product companies are, and it matters more than the
+# other two combined for this profile. Greenhouse/Lever skew toward large infra
+# employers whose "AI Engineer" postings turn out to be ML-platform,
+# deep-learning or pre-sales roles — they score low, correctly, and burn a
+# scoring call each time. These build LLM products.
+ashby:
+  - openai
+  - perplexity
+  - harvey
+  - sierra
+  - decagon
+  - glean
+  - langchain
+  - llamaindex
+  - cursor
+  - replit
+  - baseten
+  - modal
+  - fireworks
+  - writer
+  - abridge
+  - elevenlabs
+  - browserbase
+  - rogo
+  - crosby
+  - linear
+  - notion
+  - vanta
+  - ramp

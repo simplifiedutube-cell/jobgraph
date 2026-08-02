@@ -33,6 +33,7 @@ from jobgraph.state import DiscoveryState
 
 GREENHOUSE_API = "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs"
 LEVER_API = "https://api.lever.co/v0/postings/{slug}?mode=json"
+ASHBY_API = "https://api.ashbyhq.com/posting-api/job-board/{slug}"
 
 TIMEOUT = httpx.Timeout(20.0)
 
@@ -46,6 +47,7 @@ def load_targets() -> dict[str, list[str]]:
     return {
         "greenhouse": list(data.get("greenhouse") or []),
         "lever": list(data.get("lever") or []),
+        "ashby": list(data.get("ashby") or []),
     }
 
 
@@ -91,6 +93,31 @@ async def _lever(client: httpx.AsyncClient, slug: str) -> list[JobPosting]:
                 company=slug,
                 location=cats.get("location"),
                 raw_snippet=(j.get("descriptionPlain") or "")[:400],
+            )
+        )
+    return [p for p in out if p.url]
+
+
+async def _ashby(client: httpx.AsyncClient, slug: str) -> list[JobPosting]:
+    """Ashby's public board API.
+
+    This is where the AI-product companies are. Greenhouse and Lever skew
+    toward larger infra employers whose "AI engineer" postings are usually
+    ML-platform or deep-learning roles — a different job from applied LLM
+    product engineering, and they score low for good reason.
+    """
+    data = await _get_json(client, ASHBY_API.format(slug=slug))
+    if not isinstance(data, dict):
+        return []
+    out = []
+    for j in data.get("jobs", []):
+        out.append(
+            JobPosting(
+                url=j.get("jobUrl") or j.get("applyUrl") or "",
+                title=j.get("title", ""),
+                company=data.get("name") or slug,
+                location=j.get("location"),
+                posted_at=j.get("publishedAt"),
             )
         )
     return [p for p in out if p.url]
@@ -211,6 +238,7 @@ async def discover_listings(state: DiscoveryState) -> dict:
     async with httpx.AsyncClient(timeout=TIMEOUT, follow_redirects=True) as client:
         tasks = [_greenhouse(client, s) for s in targets["greenhouse"]]
         tasks += [_lever(client, s) for s in targets["lever"]]
+        tasks += [_ashby(client, s) for s in targets["ashby"]]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
     listings: list[JobPosting] = []

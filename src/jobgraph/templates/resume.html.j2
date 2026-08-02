@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ profile.name }} — Resume</title>
+<style>
+  /* Accent matches the LaTeX resume (#1F3864). Page geometry mirrors its
+     0.75in margins so the PDF is a drop-in replacement. */
+  :root {
+    --accent: #1F3864;
+    --ink: #1a1a1a;
+    --muted: #404040;
+    --rule: #c9d1de;
+  }
+
+  @page { size: A4; margin: 14mm 15mm; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 9.6pt;
+    line-height: 1.42;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+
+  header { margin-bottom: 10px; }
+
+  h1 {
+    font-size: 19pt;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: .01em;
+    line-height: 1.1;
+  }
+
+  .headline { font-size: 10pt; color: var(--muted); margin-top: 3px; }
+  .contact  { font-size: 8.8pt; color: var(--muted); margin-top: 5px; }
+  .contact span + span::before { content: " · "; color: var(--rule); }
+
+  h2 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin: 13px 0 5px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--rule);
+    /* Never strand a heading at the foot of a page... */
+    break-after: avoid;
+  }
+
+  .summary { text-align: justify; }
+
+  /* ...but do let a long role split across pages. Forcing whole entries to
+     stay together strands half a page of whitespace on a 6-bullet role. */
+  .entry { margin-bottom: 9px; }
+
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    break-after: avoid;
+  }
+
+  li { break-inside: avoid; }
+
+  .entry-title { font-weight: 700; }
+  .entry-meta  { font-size: 8.6pt; color: var(--muted); white-space: nowrap; }
+  .entry-context {
+    font-size: 9pt;
+    color: var(--muted);
+    font-style: italic;
+    margin: 2px 0 3px;
+  }
+
+  ul { list-style: none; margin-top: 3px; }
+  li {
+    position: relative;
+    padding-left: 11px;
+    margin-bottom: 2.5px;
+    text-align: justify;
+  }
+  li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: .52em;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .skills div { margin-bottom: 2.5px; }
+  .skills .group { font-weight: 700; color: var(--muted); }
+
+  .highlight {
+    margin: 6px 0 2px;
+    font-size: 9.2pt;
+    color: var(--muted);
+  }
+  .highlight .group { font-weight: 700; color: var(--accent); }
+
+  .edu { color: var(--muted); }
+
+  footer {
+    margin-top: 12px;
+    padding-top: 4px;
+    border-top: 1px solid var(--rule);
+    font-size: 7pt;
+    color: #9aa4b2;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>{{ profile.name }}</h1>
+  <div class="headline">{{ profile.headline }}</div>
+  <div class="contact">
+    <span>{{ profile.email }}</span>
+    <span>{{ profile.phone }}</span>
+    <span>{{ profile.location }}</span>
+    {%- for label, url in profile.links.items() %}
+    <span><a href="https://{{ url }}">{{ url }}</a></span>
+    {%- endfor %}
+  </div>
+</header>
+
+<h2>Summary</h2>
+<p class="summary">{{ tailored.summary }}</p>
+
+{% if tailored.highlighted_skills %}
+<div class="highlight">
+  <span class="group">Most relevant here:</span>
+  {{ tailored.highlighted_skills | join(' · ') }}
+</div>
+{% endif %}
+
+{% set ns = namespace(experience_open=false) %}
+{% for block in blocks %}
+{%- if block.kind == 'role' %}
+{%- if not ns.experience_open %}
+<h2>Experience</h2>
+{%- set ns.experience_open = true %}
+{%- endif %}
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">{{ block.meta.title }} — {{ block.meta.company }}</span>
+    <span class="entry-meta">{{ block.meta.start }} – {{ block.meta.end }}</span>
+  </div>
+  {%- if block.meta.context %}
+  <div class="entry-context">{{ block.meta.context }}</div>
+  {%- endif %}
+  <ul>
+    {%- for bullet in block.bullets %}
+    <li>{{ bullet.text }}</li>
+    {%- endfor %}
+  </ul>
+</div>
+{%- else %}
+<h2>{{ block.heading }}</h2>
+{%- set ns.experience_open = false %}
+<div class="entry">
+  <ul>
+    {%- for bullet in block.bullets %}
+    <li>{{ bullet.text }}</li>
+    {%- endfor %}
+  </ul>
+</div>
+{%- endif %}
+{% endfor %}
+
+<h2>Technical Skills</h2>
+<div class="skills">
+  {%- for group, items in profile.skills.items() %}
+  <div><span class="group">{{ group }}:</span> {{ items | join(', ') }}</div>
+  {%- endfor %}
+</div>
+
+{% if profile.education %}
+<h2>Education</h2>
+<div class="edu">{{ profile.education | join(' · ') }}</div>
+{% endif %}
+
+<footer>
+  <span>{{ profile.name }}</span>
+  <span>{% if job %}Tailored for {{ job }}{% endif %}</span>
+</footer>
+
+</body>
+</html>

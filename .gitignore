@@ -1,0 +1,28 @@
+# Personal data. The corpus is your real resume; runs contain generated
+# applications, screenshots and the ledger. None of it belongs in a public repo.
+data/runs/
+data/browser/
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# The profile corpus stays local by default. If you publish this repo, add a
+# redacted example and delete these two lines.
+data/profile/resume.yaml
+data/profile/qa_bank.yaml
+
+.env
+STOP
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.pytest_cache/
+.ruff_cache/

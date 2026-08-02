@@ -1,0 +1,88 @@
+# What you want. Drives plan_searches and the fit gate.
+# Edit freely — this is the file you'll touch most often.
+
+titles:
+  - Senior AI Engineer
+  - AI Engineer
+  - Senior Software Engineer AI
+  - LLM Engineer
+  - Applied AI Engineer
+  - Machine Learning Engineer
+  - AI Agent Engineer
+  - GenAI Engineer
+  - Staff Software Engineer AI
+
+locations:
+  - Remote
+  - Hyderabad
+  - Bangalore
+  - India
+
+remote_ok: true
+relocate_ok: true
+
+seniority:
+  - Senior
+  - Staff
+  - Lead
+  - Mid-Senior
+
+# Skills that make a role a strong match. Used as positive signal by score_fit.
+core_skills:
+  - RAG
+  - LLM
+  - AI agents
+  - agent orchestration
+  - Python
+  - FastAPI
+  - vector search
+  - embeddings
+  - evals
+  - MCP
+  - prompt engineering
+  - LangGraph
+
+# A role missing all of these is probably not for you.
+must_have_any:
+  - LLM
+  - GenAI
+  - AI agent
+  - RAG
+  - machine learning
+  - NLP
+
+# Hard filters. A posting matching any of these is dropped before scoring,
+# so it never costs an LLM call.
+exclude_keywords:
+  - unpaid
+  - internship
+  - intern
+  - commission only
+  - equity only
+  - "no salary"
+  - MLOps only
+  - Data Entry
+  - "PHP"
+  - "WordPress"
+  - "Salesforce Administrator"
+
+exclude_companies: []
+
+min_years_experience_ceiling: 12
+# Drop postings demanding more than this many years — usually mis-levelled.
+
+compensation:
+  currency: INR
+  annual_floor: 2500000
+  # Advisory only: most postings omit comp, so this never hard-filters.
+
+notice_period: "Immediate to 30 days"
+work_authorization: "Indian citizen; requires sponsorship for roles outside India"
+
+# Free-text context handed to score_fit and write_cover_letter.
+narrative: >-
+  Looking for senior individual-contributor work on production LLM and agent
+  systems — retrieval, orchestration, evaluation — where shipping and measuring
+  matter more than research. Strong preference for teams that already have real
+  users and real data. Open to remote-first companies anywhere and to on-site
+  or hybrid roles in Hyderabad or Bangalore.

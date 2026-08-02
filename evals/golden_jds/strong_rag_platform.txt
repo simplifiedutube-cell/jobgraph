@@ -1,0 +1,61 @@
+Senior AI Engineer, Retrieval & Agents
+Northwind Labs — Remote (India / EMEA friendly)
+
+About the role
+
+Northwind Labs builds a knowledge platform used by ~400 enterprise customers.
+Our assistant sits on top of customer document sets that run to hundreds of
+thousands of pages, and the quality bar is "a domain expert would agree with
+this answer, and can see where it came from."
+
+We are hiring a senior engineer to own retrieval quality and the agent layer
+end to end: ingestion, chunking, embedding, ranking, the orchestration that
+sits above it, and the evaluation harness that tells us whether a change made
+things better or worse.
+
+This is a product engineering role, not a research role. You will ship to
+production every week.
+
+What you'll do
+
+- Own the RAG pipeline: ingestion, embeddings, vector search, reranking, and
+  the guardrails that keep answers grounded in retrieved context.
+- Build and extend multi-step agent orchestration — tool calling, MCP
+  integrations, and the control flow that decides when to retrieve, when to
+  ask, and when to stop.
+- Design the evaluation harness. Define benchmarks for accuracy, latency,
+  reliability and cost, and make them run in CI so regressions are caught
+  before customers see them.
+- Drive down latency and inference cost without giving up answer quality.
+- Build the backend services and internal dashboards the team uses to see what
+  the system is doing in production.
+- Work directly with customers on integration into the systems they already
+  run — CRMs, ticketing, internal wikis.
+
+Requirements
+
+- 6+ years of software engineering experience, with at least 2 years building
+  production LLM applications.
+- Strong Python. You are comfortable owning FastAPI services, Pydantic models
+  and SQLAlchemy data access without hand-holding.
+- Demonstrated production experience with RAG architectures: embeddings,
+  vector databases, chunking strategy, and retrieval evaluation.
+- Experience building AI agents with tool use and multi-step orchestration.
+- You have built evaluation harnesses before and can talk concretely about how
+  you measured whether an LLM system was getting better.
+- Experience optimising LLM latency and cost in production.
+- Comfortable with Docker and CI/CD.
+
+Nice to have
+
+- Experience with hybrid retrieval (dense + BM25) and reranking.
+- Frontend ability — we use React and Next.js for internal dashboards.
+- Experience with MCP or similar tool-integration protocols.
+- Background integrating with enterprise SaaS (Salesforce, HubSpot).
+- Experience with classical ML (scikit-learn) alongside LLM work.
+
+What we offer
+
+Fully remote. Async-first. Competitive compensation, reviewed annually.
+
+Northwind Labs is an equal opportunity employer.

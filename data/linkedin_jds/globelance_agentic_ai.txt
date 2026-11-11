@@ -1,0 +1,38 @@
+Sr. Technical Engineer (Agentic AI)
+GLOBELANCE — India (Remote) — Full-time
+Salary: 2M INR/yr - 2.5M INR/yr (Up to Rs 25 LPA)
+Experience: 10+ years
+Source: https://www.linkedin.com/jobs/view/4447602311/
+
+Job Overview
+We are seeking an experienced Senior Technical Engineer to collaborate closely with Google's engineering teams on innovative Agentic AI and Agent-to-Agent (A2A) initiatives. The ideal candidate will possess deep software engineering expertise, hands-on experience with Google's cloud ecosystem, and a strong understanding of AI agents and distributed agentic architectures. This role is highly technical and requires the ability to independently understand business requirements, architect scalable solutions, and actively contribute to implementation while collaborating with senior technical stakeholders across distributed teams.
+
+Key Responsibilities
+- Collaborate with engineering teams to design and implement scalable solutions for Agentic AI applications.
+- Analyze business requirements and translate them into technical specifications.
+- Architect and develop distributed systems leveraging Google Cloud Platform and related technologies.
+- Engage in hands-on development and testing of AI agents and A2A architectures.
+- Communicate effectively with stakeholders to manage expectations and ensure alignment on project goals.
+- Mentor junior engineers and provide technical guidance to enhance team capabilities.
+- Contribute to the continuous improvement of engineering practices and methodologies.
+
+Core Skills
+- Strong software engineering fundamentals and system design expertise.
+- Hands-on experience with Google's cloud ecosystem and related technologies.
+- Practical experience building Agentic AI applications.
+- Strong understanding of AI agents, A2A architectures, and multi-agent systems.
+- Experience designing scalable distributed systems.
+- Ability to independently analyze requirements and implement technical solutions.
+- Excellent communication and stakeholder management skills.
+- Experience working with globally distributed engineering teams.
+
+Experience & Qualifications
+- 10+ years of professional software engineering experience.
+- Proven experience designing and developing enterprise-scale applications.
+- Hands-on experience with Google Cloud Platform (GCP) and related cloud technologies.
+- Demonstrated expertise in Agentic AI, AI agents, and A2A architectures.
+- Strong background in software architecture and distributed systems.
+- Experience working with enterprise clients and technical consulting engagements.
+- Bachelor's or Master's degree in Computer Science, Engineering, or a related field.
+
+Skills: software engineer, agentic ai, engineering, technical engineer, a2a, google cloud, google

@@ -1,0 +1,58 @@
+Lead Principal Agentic RAG Engineer – Python & AI Platforms
+Bridge AI — India (Remote) — Full-time
+Source: https://www.linkedin.com/jobs/view/4415745835/
+
+About the Role
+We are hiring a senior, hands-on Agentic RAG Engineer to design, build, and operate the
+Retrieval-Augmented Generation platforms that power our autonomous AI agents.
+This is a lead-by-example role: you design the architecture, you write the Python, you ship
+to production, you mentor engineers by building real systems. You will lead the technical
+direction of RAG and agent memory systems, while remaining deeply involved in implementation,
+observability, and operational readiness.
+GCP is our primary platform, but all designs should be multi-cloud capable.
+
+Key Responsibilities
+
+RAG & Backend Engineering (Python-First)
+- Design and build production-grade RAG pipelines
+- Implement retrieval strategies, vector database integrations, agent memory and state
+  management, prompt orchestration and chaining
+- Build scalable Python services using FastAPI / Django / similar
+- Integrate LLM APIs (OpenAI, Claude, Gemini) and open-source models (Llama, Mistral)
+- Implement model/version rollout, rollback, and simulation testing
+
+Agentic Systems & Workflow Design
+- Build and operate multi-step agent workflows
+- Enable tool calling, human-in-the-loop interventions, safe agent execution patterns
+- Define patterns for prompt versioning, context management, token and cost control
+- Collaborate closely with AgentOps to ensure production-safe execution
+
+Full-Stack & Observability
+- Design and contribute to internal UIs for agent execution monitoring, decision and
+  reasoning audits, prompt testing and visualization
+- Implement structured logging and telemetry for retrieval quality and agent decisions
+- Production-grade GenAI systems and evaluation
+- Partner with Product and Platform leads on roadmap and delivery
+
+Required Skills & Experience
+
+Core Engineering
+- 5+ years of strong Python engineering experience
+- Proven backend or full-stack development background
+- Experience with FastAPI, Django, Flask, or similar frameworks
+- Comfort contributing to frontend systems (React / Next.js / Vue) when needed
+
+RAG, LLMs & Agentic Systems
+- Hands-on experience building RAG pipelines in production
+- Strong understanding of vector databases and retrieval strategies, prompt chaining and
+  context handling, agent workflows and tool invocation
+- Experience with frameworks such as LangChain, LangGraph, LlamaIndex, AutoGen / CrewAI
+
+Cloud & Platform Engineering
+- Strong experience with GCP, including Vertex AI, GKE / Compute Engine, Cloud Functions,
+  Cloud Storage, Pub/Sub
+- Hands-on DevOps skills: Docker, Kubernetes, Terraform, CI/CD tooling
+- Understanding of secure APIs, auth, and sandboxing patterns
+
+Nice to Have
+- Multi-cloud experience

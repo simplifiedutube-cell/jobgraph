@@ -1,0 +1,46 @@
+Contract Web Designer / Developer
+Link Studio (Link Ventures) — Cambridge, MA — Work from anywhere, remote, freelance
+Rate: $50/hr, 8 hrs/wk, short term (Jul 28 - Aug 3, 2026), 1-3 years experience
+Source: https://app.usebraintrust.com/jobs/17629/
+
+About Link Studio
+Link Studio is a venture studio inside Link Ventures. We co-found AI-native companies from
+scratch, building teams around technical talent out of MIT, Harvard, and Princeton.
+
+What we're looking for
+A designer who codes. Not a developer who can nudge CSS, and not a designer who hands off a
+Figma file and disappears. The bar here is taste and judgment — we're hiring you for what
+you'd do differently, not for your ability to execute a spec we hand you.
+
+Required
+- A portfolio of sites you designed and shipped. Live URLs, not mockups.
+- Strong visual and typographic instincts. Editorial sensibility over template-y
+  SaaS-landing-page conventions.
+- Comfortable in a modern React/Next.js + Tailwind codebase, and equally comfortable in
+  hand-written HTML/CSS/JS when a project doesn't need a framework.
+- Git fluency. You'll work in our repos on branches and open PRs.
+- Deploys to Vercel.
+- Able to work from a rough brief and a conversation.
+
+Nice to have
+- Copywriting chops.
+- Brand identity work.
+- Experience designing for technical/research audiences (ML, deep tech).
+- Motion and interaction design used with restraint.
+- Light backend: forms, serverless functions, headless CMS, content pipelines.
+
+Not a fit if you need fully specified requirements, work exclusively in Figma, or your
+portfolio is mostly WordPress/Squarespace themes.
+
+Scope & Budget — Two projects, can bid on either.
+
+Project 1: Link Launchpad (linklaunchpad.org) — a three-week AI startup sprint for student
+founders. Redesign for point-of-view and hierarchy. Stack: static HTML/CSS/JS on Vercel, no
+framework. Cap 4 hours, time-sensitive.
+
+Project 2: QuanTM (quantm.ai) — a research venture on extreme model quantization. Turn an
+outdated blog into a credible research hub for ML researchers; content architecture for
+results/posts/leaderboards matters as much as visual design. Stack: Next.js 16, React 19,
+TypeScript, Tailwind CSS 4, App Router, deployed on Vercel. Cap 4 hours for the redesign.
+
+Skills listed: Website Building, Frontend, Web
